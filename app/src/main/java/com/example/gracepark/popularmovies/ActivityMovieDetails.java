@@ -17,13 +17,15 @@ public class ActivityMovieDetails extends AppCompatActivity {
         setContentView(R.layout.activity_movie_detail);
 
         Bundle movieIntent = getIntent().getExtras();
-        ((TextView) findViewById(R.id.movie_title)).setText(movieIntent.getString(ActivityMoviePosters.EXTRA_TITLE));
-        ((TextView) findViewById(R.id.plot)).setText(movieIntent.getString(ActivityMoviePosters.EXTRA_PLOT));
-        ((TextView) findViewById(R.id.date)).setText(movieIntent.getString(ActivityMoviePosters.EXTRA_DATE));
-        ((TextView) findViewById(R.id.rating)).setText(getString(R.string.rating_score, movieIntent.getString(ActivityMoviePosters.EXTRA_RATING)));
+        ParcelableMovie movie = movieIntent.getParcelable(ActivityMoviePosters.EXTRA_MOVIE);
+
+        ((TextView) findViewById(R.id.movie_title)).setText(movie.title);
+        ((TextView) findViewById(R.id.plot)).setText(movie.overview);
+        ((TextView) findViewById(R.id.date)).setText(movie.releaseDate);
+        ((TextView) findViewById(R.id.rating)).setText(getString(R.string.rating_score, movie.voteAverage));
 
         ImageView thumbnail = ((ImageView) findViewById(R.id.movie_thumbnail));
-        NetworkUtils.loadImageWithPicasso(ActivityMovieDetails.this, thumbnail, movieIntent.getString(ActivityMoviePosters.EXTRA_THUMBNAIL));
+        NetworkUtils.loadImageWithPicasso(ActivityMovieDetails.this, thumbnail, movieIntent.getString(movie.thumbnail));
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);

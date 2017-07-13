@@ -46,6 +46,10 @@ public class NetworkUtils {
     public static String getResponseFromHttpUrl(URL url) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
         try {
+            // set the connection timeout to 5 seconds and the read timeout to 10 seconds
+            urlConnection.setConnectTimeout(5000);
+            urlConnection.setReadTimeout(10000);
+
             InputStream in = urlConnection.getInputStream();
 
             Scanner scanner = new Scanner(in);
@@ -64,6 +68,10 @@ public class NetworkUtils {
 
     public static void loadImageWithPicasso(Context context, ImageView target, String photoPath) {
         String url = PICASSO_BASE + photoPath;
-        Picasso.with(context).load(url).into(target);
+        Picasso.with(context)
+                .load(url)
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.noimage)
+                .into(target);
     }
 }

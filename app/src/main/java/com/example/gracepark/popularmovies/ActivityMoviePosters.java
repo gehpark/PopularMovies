@@ -38,11 +38,9 @@ public class ActivityMoviePosters extends AppCompatActivity {
     private TextView mErrorMessage;
     private GridView mPosterGrid;
 
-    public static String EXTRA_TITLE = "movie_title";
-    public static String EXTRA_RATING = "movie_rating";
-    public static String EXTRA_THUMBNAIL = "movie_thumbnail";
-    public static String EXTRA_PLOT = "movie_plot";
-    public static String EXTRA_DATE = "movie_date";
+    private int mErrorMessageString = 0;
+
+    public static String EXTRA_MOVIE = "movie_object";
 
     public static int mHeight;
 
@@ -73,11 +71,8 @@ public class ActivityMoviePosters extends AppCompatActivity {
                 Intent intent = new Intent(ActivityMoviePosters.this, ActivityMovieDetails.class);
                 try {
                     JSONObject item = mMovieData.getJSONObject(position);
-                    intent.putExtra(EXTRA_TITLE, item.get("title").toString());
-                    intent.putExtra(EXTRA_THUMBNAIL, item.get("poster_path").toString());
-                    intent.putExtra(EXTRA_PLOT, item.get("overview").toString());
-                    intent.putExtra(EXTRA_DATE, item.get("release_date").toString());
-                    intent.putExtra(EXTRA_RATING, item.get("vote_average").toString());
+                    ParcelableMovie movie = new ParcelableMovie(item);
+                    intent.putExtra(EXTRA_MOVIE, movie);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -108,15 +103,14 @@ public class ActivityMoviePosters extends AppCompatActivity {
     public class MovieRequestTask extends AsyncTask<URL, Void, String> {
         @Override
         protected String doInBackground(URL... params) {
-            hideError();
             String response = null;
             try {
                 response = NetworkUtils.getResponseFromHttpUrl(params[0]);
             } catch (FileNotFoundException e) {
-                showError(R.string.file_not_found);
+                mErrorMessageString = R.string.file_not_found;
                 e.printStackTrace();
             } catch (IOException e) {
-                showError(R.string.generic_error);
+                mErrorMessageString = R.string.generic_error;
                 e.printStackTrace();
             }
             return response;
@@ -124,7 +118,10 @@ public class ActivityMoviePosters extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String s) {
-            if (s != null && !s.equalsIgnoreCase("")) {
+            if (mErrorMessageString != 0) {
+                showError(mErrorMessageString);
+            } else if (s != null && !s.equalsIgnoreCase("")) {
+                hideError();
                 try {
                     mAdapter.setData(parseData(s));
                 } catch (JSONException e) {
