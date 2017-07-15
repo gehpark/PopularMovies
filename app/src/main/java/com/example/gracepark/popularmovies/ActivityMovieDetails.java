@@ -25,7 +25,7 @@ public class ActivityMovieDetails extends AppCompatActivity {
         ((TextView) findViewById(R.id.rating)).setText(getString(R.string.rating_score, movie.voteAverage));
 
         ImageView thumbnail = ((ImageView) findViewById(R.id.movie_thumbnail));
-        NetworkUtils.loadImageWithPicasso(ActivityMovieDetails.this, thumbnail, movieIntent.getString(movie.thumbnail));
+        NetworkUtils.loadImageWithPicasso(ActivityMovieDetails.this, thumbnail, movie.thumbnail);
 
         DisplayMetrics metrics = new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(metrics);

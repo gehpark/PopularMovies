@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.gracepark.popularmovies.ActivityMovieDetails">
+
+    <TextView
+        android:id="@+id/movie_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/white"
+        android:textSize="@dimen/movie_title_text"
+        android:paddingRight="@dimen/gap_medium"
+        android:paddingLeft="@dimen/gap_medium"
+        android:paddingTop="@dimen/gap_huge"
+        android:paddingBottom="@dimen/gap_huge"
+        android:layout_marginBottom="@dimen/gap_small"
+        tools:text="Movie title"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginLeft="@dimen/gap_medium"
+        android:layout_marginRight="@dimen/gap_medium"
+        android:layout_marginBottom="@dimen/gap_medium" >
+
+        <ImageView
+            android:id="@+id/movie_thumbnail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:minHeight="@dimen/movie_thumbnail_detail_height"
+            android:layout_marginLeft="@dimen/gap_small"
+            android:layout_marginRight="@dimen/gap_large"
+            android:adjustViewBounds="true"
+            tools:src="@drawable/placeholder"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="Released in 2017"/>
+
+            <TextView
+                android:id="@+id/rating"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:text="5.5/10 on imdb"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/plot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/gap_medium"
+            android:layout_marginRight="@dimen/gap_medium" />
+    </ScrollView>
+
+</LinearLayout>
