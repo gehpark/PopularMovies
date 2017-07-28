@@ -22,10 +22,11 @@
             android:label="@string/details_title"
             android:parentActivityName=".ActivityMoviePosters">
         </activity>
-        <activity android:name=".MovieSettings"
-            android:label="@string/settings_title"
-            android:parentActivityName=".ActivityMoviePosters">
-        </activity>
+
+        <provider
+                    android:name=".FavoritesProvider"
+                    android:authorities="com.example.gracepark.popularmovies"
+                    android:exported="false"/>
     </application>
 
 </manifest>

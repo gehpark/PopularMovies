@@ -17,6 +17,7 @@ public class ParcelableMovie implements Parcelable {
     public String overview;
     public String releaseDate;
     public String voteAverage;
+    public String id;
 
 
     @Override
@@ -30,7 +31,8 @@ public class ParcelableMovie implements Parcelable {
                 this.thumbnail,
                 this.overview,
                 this.releaseDate,
-                this.voteAverage});
+                this.voteAverage,
+                this.id});
     }
 
     public ParcelableMovie(JSONObject item) throws JSONException {
@@ -39,10 +41,11 @@ public class ParcelableMovie implements Parcelable {
         overview = item.get("overview").toString();
         releaseDate = item.get("release_date").toString();
         voteAverage = item.get("vote_average").toString();
+        id = item.get("id").toString();
     }
 
     protected ParcelableMovie(Parcel in) {
-        String[] data = new String[5];
+        String[] data = new String[6];
 
         in.readStringArray(data);
         this.title = data[0];
@@ -50,6 +53,7 @@ public class ParcelableMovie implements Parcelable {
         this.overview = data[2];
         this.releaseDate = data[3];
         this.voteAverage = data[4];
+        this.id = data[5];
     }
 
     public static final Creator<ParcelableMovie> CREATOR = new Creator<ParcelableMovie>() {

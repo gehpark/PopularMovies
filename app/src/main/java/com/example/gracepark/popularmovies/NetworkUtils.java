@@ -2,6 +2,7 @@ package com.example.gracepark.popularmovies;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -19,19 +20,61 @@ import java.util.Scanner;
 
 public class NetworkUtils {
 
-    final static String BASE_URL =
+    private final static String BASE_URL =
             "http://api.themoviedb.org/3/movie/";
-    final static String PICASSO_BASE = "http://image.tmdb.org/t/p/w185";
+    private final static String PICASSO_BASE = "http://image.tmdb.org/t/p/w185";
+
+    private final static String REVIEWS = "/reviews";
+    private final static String TRAILERS = "/videos";
 
     public static String SORT_POPULAR = "popular";
     public static String SORT_TOP_RATED = "top_rated";
 
-    final static String DELIM = "\\A";
-    final static String PARAM_QUERY = "?api_key=";
-    final static String API_KEY = "[ENTER_YOUR_API_KEY_HERE]";
+    private final static String DELIM = "\\A";
+    private final static String PARAM_QUERY = "?api_key=";
+    private final static String API_KEY = "5848353b0582ec0f5038d64343da0388";
 
-    public static URL buildUrl(String sortBy) {
+    public static URL buildMoviesUrl(String sortBy) {
         Uri builtUri = Uri.parse(BASE_URL + sortBy + PARAM_QUERY + API_KEY);
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
+    public static URL buildMovieDetailsUrl(String movieId) {
+        Uri builtUri = Uri.parse(BASE_URL + movieId + PARAM_QUERY + API_KEY);
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
+    public static URL buildMovieReviewsUrl(String movieId) {
+        Uri builtUri = Uri.parse(BASE_URL + movieId + REVIEWS + PARAM_QUERY + API_KEY);
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
+    public static URL buildMovieTrailersUrl(String movieId) {
+        Uri builtUri = Uri.parse(BASE_URL + movieId + TRAILERS + PARAM_QUERY + API_KEY);
 
         URL url = null;
         try {
@@ -67,10 +110,11 @@ public class NetworkUtils {
     }
 
     public static void loadImageWithPicasso(Context context, ImageView target, String photoPath) {
+        Log.d("Picasso", "Loading " + photoPath);
         String url = PICASSO_BASE + photoPath;
         Picasso.with(context)
                 .load(url)
-                .placeholder(R.drawable.placeholder)
+                .placeholder(R.drawable.noimage)
                 .error(R.drawable.noimage)
                 .into(target);
     }

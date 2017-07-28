@@ -4,9 +4,14 @@
     <string name="settings_title">Settings</string>
     <string name="rating_score">%s/10</string>
     <string name="sort_by_rating">Sort by rating</string>
+    <string name="show_favorites">Show Favorites</string>
     <string name="sort_by_popularity">Sort by popularity</string>
     <string name="sorted_by_rating">Sorted by rating</string>
+    <string name="showing_favorites">Showing favorites</string>
+    <string name="marked_as_not_fav">Movie un-favorited</string>
+    <string name="marked_as_fav">Movie favorited</string>
     <string name="sorted_by_popularity">Sorted by popularity</string>
     <string name="generic_error">Something went wrong! try again?</string>
     <string name="file_not_found">File not found! perhaps you forgot the API key?</string>
+    <string name="trailer_title">Trailer %1$d</string>
 </resources>

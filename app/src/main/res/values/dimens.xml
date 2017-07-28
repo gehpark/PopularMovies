@@ -7,6 +7,6 @@
     <dimen name="gap_large">30dp</dimen>
     <dimen name="gap_huge">40dp</dimen>
 
-    <dimen name="movie_title_text">40sp</dimen>
+    <dimen name="movie_title_text">30sp</dimen>
     <dimen name="movie_thumbnail_detail_height">250dp</dimen>
 </resources>
