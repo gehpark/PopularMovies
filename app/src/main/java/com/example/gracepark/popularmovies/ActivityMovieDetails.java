@@ -19,6 +19,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static android.widget.Toast.LENGTH_SHORT;
@@ -128,7 +129,8 @@ public class ActivityMovieDetails extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), mErrorMessageString, LENGTH_SHORT).show();
             } else if (s != null && !s.equalsIgnoreCase("")) {
                 try {
-                    mAdapter.setTrailersData(parseTrailerData(s));
+                    List<String> data = parseTrailerData(s);
+                    mAdapter.setTrailersData(data.subList(0,data.size()/2), data.subList(data.size()/2, data.size()));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -151,9 +153,12 @@ public class ActivityMovieDetails extends AppCompatActivity {
         JSONObject responseJSON = new JSONObject(response);
         mMovieTrailersData = responseJSON.getJSONArray("results");
         List<String> movieTrailerList = new ArrayList();
+        List<String> movieTrailerKeyList = new ArrayList();
         for (int i = 0; i < mMovieTrailersData.length(); i++) {
             movieTrailerList.add(mMovieTrailersData.getJSONObject(i).get("name").toString());
+            movieTrailerKeyList.add(mMovieTrailersData.getJSONObject(i).get("key").toString());
         }
+        movieTrailerList.addAll(movieTrailerKeyList);
         return movieTrailerList;
     }
 }

@@ -32,7 +32,7 @@ public class NetworkUtils {
 
     private final static String DELIM = "\\A";
     private final static String PARAM_QUERY = "?api_key=";
-    private final static String API_KEY = "5848353b0582ec0f5038d64343da0388";
+    private final static String API_KEY = "[ENTER API KEY HERE]";
 
     public static URL buildMoviesUrl(String sortBy) {
         Uri builtUri = Uri.parse(BASE_URL + sortBy + PARAM_QUERY + API_KEY);
@@ -72,6 +72,21 @@ public class NetworkUtils {
 
         return url;
     }
+
+    public static URL buildYoutubeUrl(String key) {
+        Uri builtUri = Uri.parse("http://www.youtube.com/watch?v=" + key);
+
+        URL url = null;
+        try {
+            url = new URL(builtUri.toString());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+
+        return url;
+    }
+
+
 
     public static URL buildMovieTrailersUrl(String movieId) {
         Uri builtUri = Uri.parse(BASE_URL + movieId + TRAILERS + PARAM_QUERY + API_KEY);

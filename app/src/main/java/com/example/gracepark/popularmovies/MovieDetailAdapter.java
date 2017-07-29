@@ -1,14 +1,20 @@
 package com.example.gracepark.popularmovies;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
+
+import static android.support.v4.content.ContextCompat.startActivity;
+import static com.example.gracepark.popularmovies.NetworkUtils.buildYoutubeUrl;
 
 /**
  * Created by gpark on 7/27/17.
@@ -17,7 +23,8 @@ import java.util.List;
 class MovieDetailAdapter extends RecyclerView.Adapter {
     private LayoutInflater mLayoutInflater;
     private List<MovieReviewItem> reviewsList;
-    private List<String> trailersList;
+    private List<String> trailersNameList;
+    private List<String> trailersKeyList;
     private Context context;
     private ParcelableMovie mMovie;
 
@@ -31,12 +38,13 @@ class MovieDetailAdapter extends RecyclerView.Adapter {
         this.context = context;
         mLayoutInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         reviewsList = reviews;
-        trailersList = trailers;
+        trailersNameList = trailers;
         mMovie = movie;
     }
 
-    public void setTrailersData(List<String> data) {
-        trailersList = data;
+    public void setTrailersData(List<String> data, List<String> keys) {
+        trailersNameList = data;
+        trailersKeyList = keys;
     }
 
     public void setReviewsData(List<MovieReviewItem> data) {
@@ -50,7 +58,7 @@ class MovieDetailAdapter extends RecyclerView.Adapter {
     }
 
     public int getTrailersCount() {
-        return trailersList.size();
+        return trailersNameList.size();
     }
 
     public int getReviewsCount() {
@@ -105,14 +113,26 @@ class MovieDetailAdapter extends RecyclerView.Adapter {
 
     private static class TrailerViewHolder extends RecyclerView.ViewHolder{
         TextView mTrailerTitle;
+        LinearLayout mPanel;
 
         public TrailerViewHolder(View view) {
             super(view);
             mTrailerTitle = (TextView) view.findViewById(R.id.trailer_title);
+            mPanel = (LinearLayout) view.findViewById(R.id.trailer_panel);
         }
 
-        public void bind(String title) {
+        public void bind(String title, final Context context, final String key) {
             mTrailerTitle.setText(title);
+            mPanel.setOnClickListener(
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://www.youtube.com/watch?v=" + key));
+                            startActivity(context, intent, null);
+                        }
+                    }
+            );
+
         }
     }
 
@@ -143,7 +163,7 @@ class MovieDetailAdapter extends RecyclerView.Adapter {
                 break;
             case TRAILER_VIEW_TYPE:
                 TrailerViewHolder trailerViewHolder = (TrailerViewHolder) holder;
-                trailerViewHolder.bind(trailersList.get(position - HEADER_COUNT));
+                trailerViewHolder.bind(trailersNameList.get(position - HEADER_COUNT), context, trailersKeyList.get(position - HEADER_COUNT));
                 break;
         }
     }
