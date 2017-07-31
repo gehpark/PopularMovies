@@ -38,18 +38,18 @@ public class ActivityMoviePosters extends AppCompatActivity implements
         LoaderManager.LoaderCallbacks<Cursor> {
 
     MovieAdapter mAdapter;
-    private JSONArray mMovieData;
+    private List<ParcelableMovie> mMovieObjects;
 
-    private final int LOADER_ID = 0;
-
-    private int mSortByState = R.id.sort_by_popularity;
+    private int mSortByState;
     private TextView mSortByStateDisplay;
     private TextView mErrorMessage;
     private GridView mPosterGrid;
+    private int mScrollToPosition;
 
     private int mErrorMessageString = 0;
 
     public static String EXTRA_MOVIE = "movie_object";
+    private static String SORT_BY = "sort_by";
 
     public static int mHeight;
 
@@ -67,12 +67,39 @@ public class ActivityMoviePosters extends AppCompatActivity implements
         mErrorMessage = (TextView) findViewById(R.id.error_message);
 
         mSortByStateDisplay = ((TextView) findViewById(R.id.sort_by_status));
-        mSortByStateDisplay.setText(getString(R.string.sorted_by_popularity));
-
-        fetchPosters(NetworkUtils.SORT_POPULAR);
 
         mAdapter = new MovieAdapter(ActivityMoviePosters.this, new ArrayList<String>());
         mPosterGrid.setAdapter(mAdapter);
+
+        if (savedInstanceState != null) {
+            mSortByState = savedInstanceState.getInt(SORT_BY);
+            mScrollToPosition = savedInstanceState.getInt("gridview_position");
+        } else {
+            mSortByState = R.string.sorted_by_popularity;
+        }
+        if (mSortByState == R.string.sorted_by_popularity) {
+            fetchPosters(NetworkUtils.SORT_POPULAR);
+        } else if (mSortByState == R.string.sorted_by_rating) {
+            fetchPosters(NetworkUtils.SORT_TOP_RATED);
+        } else if (mSortByState == R.string.showing_favorites) {
+            mAdapter.setData(new ArrayList<String>());
+            mAdapter.notifyDataSetChanged();
+            final Uri uri = FavoritesContract.FavoritesEntry.CONTENT_URI;
+            try {
+                Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+                mAdapter.setCursor(cursor);
+                mAdapter.notifyDataSetChanged();
+                if (mScrollToPosition != 0) mPosterGrid.smoothScrollToPosition(mScrollToPosition);
+            } catch (Exception e){
+                Log.d(e.getLocalizedMessage(), "yaaho");
+            }
+        }
+
+
+
+        mSortByStateDisplay.setText(getString(mSortByState));
+
+
 
         mPosterGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -83,19 +110,24 @@ public class ActivityMoviePosters extends AppCompatActivity implements
                     new MovieDetailsRequestTask().execute(movieDetailsUrl);
 
                 } else {
-                    try {
-                        JSONObject item = mMovieData.getJSONObject(position);
-                        ParcelableMovie movie = new ParcelableMovie(item);
-                        intent.putExtra(EXTRA_MOVIE, movie);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
+                    intent.putExtra(EXTRA_MOVIE, mMovieObjects.get(position));
                     startActivity(intent);
                 }
             }
         });
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(SORT_BY, mSortByState);
+        outState.putInt("gridview_position", mPosterGrid.getFirstVisiblePosition());
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+    }
 
     private void showError(int message) {
         mErrorMessage.setText(getString(message));
@@ -143,16 +175,19 @@ public class ActivityMoviePosters extends AppCompatActivity implements
                     e.printStackTrace();
                 }
                 mAdapter.notifyDataSetChanged();
+                if (mScrollToPosition != 0) mPosterGrid.smoothScrollToPosition(mScrollToPosition);
             }
         }
     }
 
     private List<String> parseData(String response) throws JSONException {
         JSONObject responseJSON = new JSONObject(response);
-        mMovieData = responseJSON.getJSONArray("results");
+        JSONArray movieData = responseJSON.getJSONArray("results");
         List<String> movieIdList = new ArrayList();
-        for (int i = 0; i < mMovieData.length(); i++) {
-            movieIdList.add(mMovieData.getJSONObject(i).get("poster_path").toString());
+        mMovieObjects = new ArrayList<>();
+        for (int i = 0; i < movieData.length(); i++) {
+            movieIdList.add(movieData.getJSONObject(i).get("poster_path").toString());
+            mMovieObjects.add(new ParcelableMovie(movieData.getJSONObject(i)));
         }
         return movieIdList;
     }
@@ -205,40 +240,36 @@ public class ActivityMoviePosters extends AppCompatActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.sort_by_popularity) {
-            if (mSortByState != R.id.sort_by_popularity) {
+            if (mSortByState != R.string.sorted_by_popularity) {
                 fetchPosters(NetworkUtils.SORT_POPULAR);
-                mSortByState = R.id.sort_by_popularity;
-                mSortByStateDisplay.setText(getString(R.string.sorted_by_popularity));
+                mSortByState = R.string.sorted_by_popularity;
+                mSortByStateDisplay.setText(getString(mSortByState));
             }
             return true;
         } else if (item.getItemId() == R.id.sort_by_rating) {
-            if (mSortByState != R.id.sort_by_rating) {
+            if (mSortByState != R.string.sorted_by_rating) {
                 fetchPosters(NetworkUtils.SORT_TOP_RATED);
-                mSortByState = R.id.sort_by_rating;
-                mSortByStateDisplay.setText(getString(R.string.sorted_by_rating));
+                mSortByState = R.string.sorted_by_rating;
+                mSortByStateDisplay.setText(getString(mSortByState));
             }
             return true;
         } else if (item.getItemId() == R.id.show_favorites) {
             mAdapter.setData(new ArrayList<String>());
             mAdapter.notifyDataSetChanged();
-            mSortByStateDisplay.setText(getString(R.string.showing_favorites));
+            mSortByState = R.string.showing_favorites;
+            mSortByStateDisplay.setText(getString(mSortByState));
             final Uri uri = FavoritesContract.FavoritesEntry.CONTENT_URI;
             try {
                 Cursor cursor = getContentResolver().query(uri, null, null, null, null);
                 mAdapter.setCursor(cursor);
                 mAdapter.notifyDataSetChanged();
+                if (mScrollToPosition != 0) mPosterGrid.smoothScrollToPosition(mScrollToPosition);
             } catch (Exception e){
                 Log.d(e.getLocalizedMessage(), "yaaho");
             }
-            mSortByState = R.id.show_favorites;
+            return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-//        getSupportLoaderManager().restartLoader(LOADER_ID, null, this);
     }
 
     @Override

@@ -31,6 +31,10 @@ public class MovieAdapter extends BaseAdapter {
         listStorage = data;
     }
 
+    public List<String> getData() {
+        return listStorage;
+    }
+
     @Override
     public int getCount() {
         if (mCursor != null && mCursor.getCount() != 0 && listStorage.isEmpty()) {

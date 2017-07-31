@@ -17,7 +17,7 @@ import static android.support.v4.content.ContextCompat.startActivity;
 import static com.example.gracepark.popularmovies.NetworkUtils.buildYoutubeUrl;
 
 /**
- * Created by gpark on 7/27/17.
+ * Adapter to load and handle details of movies.
  */
 
 class MovieDetailAdapter extends RecyclerView.Adapter {
